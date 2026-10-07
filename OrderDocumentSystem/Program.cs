@@ -59,6 +59,16 @@ builder.Services.AddControllers()  // 加入Controller相關功能
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("VuePolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 // 依賴注入建立實例
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<ProductService>();
@@ -89,6 +99,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection(); // 將http存取重新導向至https
+
+app.UseCors("VuePolicy");
 
 app.UseMiddleware<ExceptionHandlingMiddleware>(); // 中介例外處理器
 
