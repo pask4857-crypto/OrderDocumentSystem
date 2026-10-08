@@ -1,10 +1,13 @@
 <script setup>
 import { ref } from 'vue'
+import { useAuthStore } from './stores/auth'
 import axios from 'axios'
+import http from './api/http'
 
 const username = ref('')
 const password = ref('')
 const message = ref('')
+const authStore = useAuthStore()
 
 const login = async () => {
   message.value = ''
@@ -18,7 +21,13 @@ const login = async () => {
       }
     )
 
-    console.log('Login response:', response.data)
+    // console.log('Login response:', response.data)
+    authStore.login(response.data.token)
+
+    console.log('登入成功')
+    console.log('Token:', authStore.token)
+
+    await testCustomers()
 
     message.value = '登入成功'
   } catch (error) {
@@ -27,6 +36,17 @@ const login = async () => {
     message.value = '登入失敗'
   }
 }
+
+const testCustomers = async () => {
+  try {
+    const response = await http.get('/Customers')
+
+    console.log('Customers:', response.data)
+  } catch (error) {
+    console.error('取得 Customers 失敗', error)
+  }
+}
+
 </script>
 
 <template>
