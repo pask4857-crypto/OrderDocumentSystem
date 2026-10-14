@@ -93,11 +93,14 @@ public class AuthController : ControllerBase
             });
         }
 
+
         var token = _jwtService.GenerateToken(user);
 
         return Ok(new
         {
-            token
+            token,
+            user.Role
         });
+
     }
 }
