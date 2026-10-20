@@ -53,7 +53,38 @@ function formatAmount(value) {
 }
 
 function getErrorMessage(error, fallback) {
-    return error.response?.data?.message || fallback
+    const status = error.response?.status
+    const serverMessage = error.response?.data?.message
+
+    if (serverMessage) {
+        return serverMessage
+    }
+
+    if (!error.response) {
+        return '無法連線至伺服器，請確認後端是否啟動。'
+    }
+
+    if (status === 400) {
+        return '提交的資料不正確，請檢查輸入內容。'
+    }
+
+    if (status === 401) {
+        return '登入狀態已失效，請重新登入。'
+    }
+
+    if (status === 403) {
+        return '你沒有權限執行此操作。'
+    }
+
+    if (status === 404) {
+        return '找不到指定的資料。'
+    }
+
+    if (status >= 500) {
+        return '伺服器發生錯誤，請稍後再試。'
+    }
+
+    return fallback
 }
 
 async function loadOrders() {
@@ -251,6 +282,8 @@ async function updateOrderStatus(order, newStatus) {
 
 async function downloadOrderDocument(orderId) {
     errorMessage.value = ''
+    successMessage.value = ''
+    let blobUrl
 
     try {
         const response = await http.get(
@@ -260,19 +293,38 @@ async function downloadOrderDocument(orderId) {
             }
         )
 
-        const blobUrl = URL.createObjectURL(response.data)
-        const link = document.createElement('a')
+        blobUrl = URL.createObjectURL(response.data)
 
+        const link = document.createElement('a')
         link.href = blobUrl
         link.download = `Order_${orderId}.docx`
 
         document.body.appendChild(link)
         link.click()
         link.remove()
-
-        URL.revokeObjectURL(blobUrl)
     } catch (error) {
-        errorMessage.value = '下載 Word 訂單文件失敗。'
+        const fallback = '下載 Word 訂單文件失敗。'
+        const errorData = error.response?.data
+
+        if (errorData instanceof Blob) {
+            try {
+                const text = await errorData.text()
+                const data = JSON.parse(text)
+
+                errorMessage.value =
+                    data.message || getErrorMessage(error, fallback)
+            } catch {
+                errorMessage.value = getErrorMessage(error, fallback)
+            }
+        } else {
+            errorMessage.value = getErrorMessage(error, fallback)
+        }
+    } finally {
+        if (blobUrl) {
+            window.setTimeout(() => {
+                URL.revokeObjectURL(blobUrl)
+            }, 1000)
+        }
     }
 }
 
@@ -490,7 +542,7 @@ onMounted(async () => {
                             ? '確認訂單'
                             : status === 'Completed'
                                 ? '完成訂單'
-                    : '取消訂單'
+                                : '取消訂單'
                     }}
                 </button>
             </div>

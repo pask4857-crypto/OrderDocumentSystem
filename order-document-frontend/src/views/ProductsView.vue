@@ -28,8 +28,25 @@ async function loadProducts() {
         const response = await http.get('/Products')
         products.value = response.data
     } catch (error) {
-        errorMessage.value =
-            error.response?.data?.message || '載入商品失敗，請稍後再試。'
+        const status = error.response?.status
+        const serverMessage = error.response?.data?.message
+
+        if (serverMessage) {
+            errorMessage.value = serverMessage
+        } else if (!error.response) {
+            errorMessage.value =
+                '無法連線至伺服器，請確認後端是否啟動。'
+        } else if (status === 401) {
+            errorMessage.value = '登入狀態已失效，請重新登入。'
+        } else if (status === 403) {
+            errorMessage.value = '你沒有權限查看商品。'
+        } else if (status === 404) {
+            errorMessage.value = '找不到商品資料。'
+        } else if (status >= 500) {
+            errorMessage.value = '伺服器發生錯誤，請稍後再試。'
+        } else {
+            errorMessage.value = '載入商品失敗，請稍後再試。'
+        }
     } finally {
         loading.value = false
     }
@@ -105,8 +122,26 @@ async function saveProduct() {
         resetForm()
         await loadProducts()
     } catch (error) {
-        errorMessage.value =
-            error.response?.data?.message || '儲存商品失敗，請稍後再試。'
+        const status = error.response?.status
+        const serverMessage = error.response?.data?.message
+        const action = isEditing.value ? '更新' : '新增'
+
+        if (serverMessage) {
+            errorMessage.value = serverMessage
+        } else if (!error.response) {
+            errorMessage.value =
+                '無法連線至伺服器，請確認後端是否啟動。'
+        } else if (status === 400) {
+            errorMessage.value = '商品資料不正確，請檢查輸入內容。'
+        } else if (status === 403) {
+            errorMessage.value = '你沒有權限執行此操作。'
+        } else if (status === 404) {
+            errorMessage.value = '找不到指定的商品。'
+        } else if (status >= 500) {
+            errorMessage.value = '伺服器發生錯誤，請稍後再試。'
+        } else {
+            errorMessage.value = `商品${action}失敗，請稍後再試。`
+        }
     } finally {
         saving.value = false
     }
@@ -134,8 +169,27 @@ async function deleteProduct(product) {
         successMessage.value = '商品刪除成功。'
         await loadProducts()
     } catch (error) {
-        errorMessage.value =
-            error.response?.data?.message || '刪除商品失敗，請稍後再試。'
+        const status = error.response?.status
+        const serverMessage = error.response?.data?.message
+
+        if (serverMessage) {
+            // 優先顯示後端提供的錯誤訊息
+            errorMessage.value = serverMessage
+        } else if (!error.response) {
+            // 沒有收到伺服器回應，通常是網路或連線問題
+            errorMessage.value =
+                '無法連線至伺服器，請確認後端是否啟動。'
+        } else if (status === 400) {
+            errorMessage.value = '請求資料不正確，請檢查輸入內容。'
+        } else if (status === 403) {
+            errorMessage.value = '你沒有權限刪除商品。'
+        } else if (status === 404) {
+            errorMessage.value = '找不到指定的商品。'
+        } else if (status >= 500) {
+            errorMessage.value = '伺服器發生錯誤，請稍後再試。'
+        } else {
+            errorMessage.value = '刪除商品失敗，請稍後再試。'
+        }
     }
 }
 
