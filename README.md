@@ -151,13 +151,53 @@ dotnet ef database update
 
 ### 3. 設定 JWT
 
-在 `appsettings.Development.json` 中設定以下欄位：
+本專案使用 JWT（JSON Web Token）進行使用者身分驗證，並透過環境變數提供簽章金鑰，避免將敏感資訊直接寫入原始碼或提交至 GitHub。
 
-- `Jwt:Key`
-- `Jwt:Issuer`
-- `Jwt:Audience`
+首次建置專案時，請依照以下步驟設定 JWT 金鑰。
 
-請依照專案設定使用的欄位名稱填入有效值，並使用安全的隨機金鑰。不要將實際資料庫密碼或 JWT 金鑰提交至 GitHub。
+#### Windows PowerShell
+
+**（1）產生隨機金鑰**
+
+在 PowerShell 執行：
+
+```powershell
+$bytes = New-Object byte[] 64
+[System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
+$key = [Convert]::ToBase64String($bytes)
+```
+
+這會產生一組隨機金鑰，並暫時儲存在 `$key` 變數中。
+
+**（2）設定使用者環境變數**
+
+```powershell
+[Environment]::SetEnvironmentVariable("Jwt__Key", $key, "User")
+```
+
+此設定會將金鑰儲存在目前 Windows 使用者的環境變數中。
+
+設定完成後，請重新開啟終端機或 VS Code，讓新的程序讀取更新後的環境變數。
+
+**（3）確認環境變數**
+
+```powershell
+$env:Jwt__Key
+```
+
+確認目前終端機能讀取到金鑰即可，請勿將金鑰內容公開或提交至版本控制系統。
+
+#### JWT 其他設定
+
+除了 `Jwt__Key`，也請確認 `Jwt:Issuer` 與 `Jwt:Audience` 的值符合後端設定。
+
+ASP.NET Core 環境變數的雙底線 `__` 對應組態中的冒號 `:`，因此 `Jwt__Key` 對應 `Jwt:Key`。
+
+如果專案透過環境變數提供金鑰，就不需要將實際金鑰寫入 `appsettings.json` 或 `appsettings.Development.json`。
+
+在其他裝置上建置專案時，請另外產生並設定該裝置使用的 JWT 金鑰。使用不同金鑰的環境所簽發的 Token，預設不能互相驗證。
+
+請勿將真實 JWT 金鑰、資料庫密碼或其他敏感資訊提交至 GitHub。
 
 ### 4. 啟動後端
 
