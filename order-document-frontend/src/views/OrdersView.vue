@@ -550,11 +550,13 @@ onMounted(async () => {
     </section>
 </template>
 
+
 <style scoped>
 .orders-page {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    min-width: 0;
 }
 
 .page-header,
@@ -563,6 +565,12 @@ onMounted(async () => {
     justify-content: space-between;
     align-items: center;
     gap: 16px;
+    min-width: 0;
+}
+
+.page-header>div,
+.details-header>h2 {
+    min-width: 0;
 }
 
 h1,
@@ -574,45 +582,69 @@ p {
 
 h1 {
     margin-bottom: 8px;
+    color: #1e293b;
+    font-size: 28px;
+    line-height: 1.4;
 }
 
 .page-header p {
     margin-bottom: 0;
-    color: #666;
+    color: #64748b;
 }
 
 .form-section,
 .list-section,
 .details-section {
+    min-width: 0;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 3px 10px rgb(15 23 42 / 4%);
 }
 
 .form-section h2,
 .list-section h2 {
     margin-bottom: 16px;
+    color: #1e293b;
+    font-size: 20px;
 }
 
 .order-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    min-width: 0;
 }
 
 .form-field {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    min-width: 0;
+}
+
+.form-field label {
+    color: #475569;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .form-field input,
 .form-field select {
     width: 100%;
-    box-sizing: border-box;
-    padding: 9px 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font: inherit;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(59 130 246 / 12%);
 }
 
 .item-row {
@@ -620,6 +652,7 @@ h1 {
     grid-template-columns: minmax(0, 1fr) 120px auto;
     align-items: end;
     gap: 12px;
+    min-width: 0;
 }
 
 .item-actions,
@@ -632,32 +665,41 @@ h1 {
 
 .total-preview {
     margin-bottom: 0;
+    color: #1e293b;
     font-size: 18px;
     font-weight: bold;
 }
 
 .hint {
     margin-bottom: 0;
-    color: #666;
+    color: #64748b;
     font-size: 13px;
+    overflow-wrap: anywhere;
 }
 
 button {
+    min-height: 40px;
     padding: 9px 14px;
     border: 0;
-    border-radius: 4px;
+    border-radius: 8px;
     background: #2563eb;
     color: white;
+    font-size: 14px;
     cursor: pointer;
 }
 
 button:disabled {
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: not-allowed;
 }
 
+button:focus-visible {
+    outline: 3px solid rgb(59 130 246 / 35%);
+    outline-offset: 2px;
+}
+
 .secondary-button {
-    background: #6b7280;
+    background: #64748b;
 }
 
 .danger-button {
@@ -669,53 +711,86 @@ button:disabled {
 }
 
 .table-wrapper {
+    width: 100%;
+    max-width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    text-align: left;
+}
+
+.list-section table {
+    min-width: 760px;
+}
+
+.details-section table {
+    min-width: 520px;
 }
 
 th,
 td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
     text-align: left;
     white-space: nowrap;
 }
 
 th {
-    background: #f5f5f5;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+td {
+    color: #334155;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .action-cell {
-    display: flex;
-    gap: 8px;
+    white-space: nowrap;
+}
+
+.action-cell button+button {
+    margin-left: 8px;
 }
 
 .message {
     margin-bottom: 0;
     padding: 12px;
-    border-radius: 4px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
 }
 
 .error-message {
+    border-color: #fecaca;
     background: #fef2f2;
     color: #b91c1c;
 }
 
 .success-message {
+    border-color: #bbf7d0;
     background: #f0fdf4;
     color: #166534;
 }
 
 .order-info {
     margin-bottom: 20px;
+    min-width: 0;
 }
 
 .order-info p {
     margin-bottom: 8px;
+    overflow-wrap: anywhere;
 }
 
 .status-actions {
@@ -728,17 +803,109 @@ th {
     margin-bottom: 0;
 }
 
+/* 支援滑鼠的裝置才顯示 hover 效果 */
+@media (hover: hover) and (pointer: fine) {
+    button:not(:disabled):hover {
+        filter: brightness(0.93);
+    }
+}
+
+/* 平板與較窄的桌面畫面 */
+@media (max-width: 900px) {
+    .item-row {
+        grid-template-columns: minmax(0, 1fr) 110px;
+    }
+
+    .remove-button {
+        grid-column: 1 / -1;
+        justify-self: start;
+    }
+}
+
+/* 手機畫面 */
 @media (max-width: 700px) {
-    .page-header {
+    .orders-page {
+        gap: 18px;
+    }
+
+    .page-header,
+    .details-header {
+        flex-direction: column;
         align-items: flex-start;
+        gap: 12px;
+    }
+
+    .page-header h1 {
+        font-size: 25px;
+    }
+
+    .page-header>button,
+    .details-header>button {
+        width: 100%;
+    }
+
+    .form-section,
+    .list-section,
+    .details-section {
+        padding: 16px;
     }
 
     .item-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+        padding: 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
     }
 
-    .action-cell {
-        flex-wrap: wrap;
+    .remove-button {
+        grid-column: auto;
+        justify-self: stretch;
+        width: 100%;
+    }
+
+    .item-actions button {
+        width: 100%;
+    }
+
+    .form-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-actions button {
+        width: 100%;
+        padding: 9px 8px;
+    }
+
+    .status-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .status-actions h3 {
+        grid-column: 1 / -1;
+    }
+
+    .status-actions button {
+        width: 100%;
+        padding: 9px 8px;
+    }
+
+    th,
+    td {
+        padding: 11px 12px;
+    }
+
+    .action-cell button+button {
+        margin-left: 4px;
+    }
+}
+
+/* 減少動態效果的使用者偏好 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        scroll-behavior: auto;
     }
 }
 </style>

@@ -61,6 +61,7 @@ const logout = () => {
 </template>
 
 
+
 <style scoped>
 .layout {
     min-height: 100vh;
@@ -73,9 +74,9 @@ const logout = () => {
 .navbar {
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 24px;
     min-height: 76px;
-    padding: 0 5%;
+    padding: 12px 5%;
     background: #1e3a5f;
     color: white;
     box-shadow: 0 2px 8px rgb(15 23 42 / 12%);
@@ -95,6 +96,7 @@ const logout = () => {
 .brand-icon {
     display: grid;
     place-items: center;
+    flex-shrink: 0;
     width: 38px;
     height: 38px;
     border-radius: 10px;
@@ -110,10 +112,12 @@ const logout = () => {
 }
 
 .nav-link {
+    display: block;
     padding: 11px 16px;
     border-radius: 8px;
     color: #dbeafe;
     text-decoration: none;
+    white-space: nowrap;
     transition: background-color 0.2s;
 }
 
@@ -127,6 +131,7 @@ const logout = () => {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-shrink: 0;
 }
 
 .user-role {
@@ -174,11 +179,12 @@ const logout = () => {
     font-size: 14px;
 }
 
+/* 平板與較窄的桌面畫面 */
 @media (max-width: 900px) {
     .navbar {
         flex-wrap: wrap;
         gap: 16px;
-        padding: 18px 5%;
+        padding: 16px 5%;
     }
 
     .brand {
@@ -198,9 +204,22 @@ const logout = () => {
     }
 }
 
-@media (max-width: 480px) {
+/* 手機畫面 */
+@media (max-width: 600px) {
+    .navbar {
+        gap: 14px;
+        padding: 16px;
+    }
+
     .brand {
-        font-size: 16px;
+        width: 100%;
+        font-size: 17px;
+        white-space: normal;
+    }
+
+    .user-actions {
+        width: 100%;
+        justify-content: space-between;
     }
 
     .nav-links {
@@ -212,8 +231,14 @@ const logout = () => {
         font-size: 14px;
     }
 
+    .content {
+        padding: 20px 14px;
+    }
+
     .footer {
         flex-direction: column;
+        gap: 6px;
+        padding: 18px 16px;
     }
 }
 </style>

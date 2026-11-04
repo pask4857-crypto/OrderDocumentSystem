@@ -301,11 +301,13 @@ onMounted(() => {
     </section>
 </template>
 
+
 <style scoped>
 .products-page {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    min-width: 0;
 }
 
 .page-header {
@@ -313,6 +315,11 @@ onMounted(() => {
     justify-content: space-between;
     align-items: center;
     gap: 16px;
+    min-width: 0;
+}
+
+.page-header>div {
+    min-width: 0;
 }
 
 h1,
@@ -323,23 +330,31 @@ p {
 
 h1 {
     margin-bottom: 8px;
+    color: #1e293b;
+    font-size: 28px;
+    line-height: 1.4;
 }
 
 .page-header p {
     margin-bottom: 0;
-    color: #666;
+    color: #64748b;
 }
 
 .form-section,
 .list-section {
+    min-width: 0;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 3px 10px rgb(15 23 42 / 4%);
 }
 
 .form-section h2,
 .list-section h2 {
     margin-bottom: 16px;
+    color: #1e293b;
+    font-size: 20px;
 }
 
 .product-form {
@@ -352,28 +367,45 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    min-width: 0;
+}
+
+.form-field label {
+    color: #475569;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .form-field input {
     width: 100%;
-    box-sizing: border-box;
-    padding: 9px 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font: inherit;
+}
+
+.form-field input:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(59 130 246 / 12%);
 }
 
 .form-actions {
     grid-column: 1 / -1;
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
 }
 
 button {
+    min-height: 40px;
     padding: 9px 14px;
     border: 0;
-    border-radius: 4px;
+    border-radius: 8px;
     background: #2563eb;
     color: white;
+    font-size: 14px;
     cursor: pointer;
 }
 
@@ -383,7 +415,7 @@ button:disabled {
 }
 
 .secondary-button {
-    background: #6b7280;
+    background: #64748b;
 }
 
 .danger-button {
@@ -391,53 +423,142 @@ button:disabled {
 }
 
 .table-wrapper {
+    width: 100%;
+    max-width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 table {
     width: 100%;
+    min-width: 600px;
     border-collapse: collapse;
+    text-align: left;
 }
 
 th,
 td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
     text-align: left;
 }
 
 th {
-    background: #f5f5f5;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+td {
+    color: #334155;
+    overflow-wrap: anywhere;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .action-cell {
-    display: flex;
-    gap: 8px;
+    white-space: nowrap;
+}
+
+.action-cell button+button {
+    margin-left: 8px;
 }
 
 .message {
     margin-bottom: 0;
     padding: 12px;
-    border-radius: 4px;
+    border-radius: 8px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
 }
 
 .error-message {
+    border: 1px solid #fecaca;
     background: #fef2f2;
     color: #b91c1c;
 }
 
 .success-message {
+    border: 1px solid #bbf7d0;
     background: #f0fdf4;
     color: #166534;
 }
 
-@media (max-width: 700px) {
+/* 支援滑鼠的裝置才顯示 hover 效果 */
+@media (hover: hover) and (pointer: fine) {
+    button:not(:disabled):hover {
+        filter: brightness(0.93);
+    }
+}
+
+/* 平板與較窄的桌面畫面 */
+@media (max-width: 900px) {
     .product-form {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .page-header {
         align-items: flex-start;
+    }
+}
+
+/* 手機畫面 */
+@media (max-width: 700px) {
+    .products-page {
+        gap: 18px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .page-header h1 {
+        font-size: 25px;
+    }
+
+    .page-header>button {
+        width: 100%;
+    }
+
+    .form-section,
+    .list-section {
+        padding: 16px;
+    }
+
+    .product-form {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .form-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-actions button {
+        width: 100%;
+        padding: 9px 8px;
+    }
+
+    th,
+    td {
+        padding: 11px 12px;
+    }
+
+    .action-cell button+button {
+        margin-left: 4px;
+    }
+}
+
+/* 減少動態效果的使用者偏好 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        scroll-behavior: auto;
     }
 }
 </style>

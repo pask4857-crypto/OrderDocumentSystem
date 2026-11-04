@@ -263,11 +263,13 @@ onMounted(() => {
     </section>
 </template>
 
+
 <style scoped>
 .customers-page {
     display: flex;
     flex-direction: column;
     gap: 22px;
+    min-width: 0;
 }
 
 .page-header {
@@ -275,12 +277,18 @@ onMounted(() => {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
+    min-width: 0;
+}
+
+.page-header>div:first-child {
+    min-width: 0;
 }
 
 .page-header h1 {
     margin: 0 0 8px;
     color: #1e293b;
     font-size: 28px;
+    line-height: 1.4;
 }
 
 .page-header p {
@@ -298,33 +306,12 @@ onMounted(() => {
 .primary-button,
 .secondary-button,
 .edit-button {
+    min-height: 40px;
     padding: 10px 16px;
     border-radius: 8px;
     font-size: 14px;
     cursor: pointer;
 }
-
-
-.row-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.delete-button {
-    padding: 7px 12px;
-    border: 1px solid #fecaca;
-    border-radius: 8px;
-    background: #fef2f2;
-    color: #dc2626;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.delete-button:hover {
-    background: #fee2e2;
-}
-
 
 .primary-button {
     border: 1px solid #2563eb;
@@ -332,18 +319,10 @@ onMounted(() => {
     color: white;
 }
 
-.primary-button:hover {
-    background: #1d4ed8;
-}
-
 .secondary-button {
     border: 1px solid #cbd5e1;
     background: white;
     color: #475569;
-}
-
-.secondary-button:hover {
-    background: #f8fafc;
 }
 
 .edit-button {
@@ -353,14 +332,33 @@ onMounted(() => {
     color: #1d4ed8;
 }
 
+.delete-button {
+    min-height: 36px;
+    padding: 7px 12px;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    background: #fef2f2;
+    color: #dc2626;
+    font-size: 14px;
+    cursor: pointer;
+}
+
 .primary-button:disabled,
 .secondary-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
+.row-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
 .form-card,
 .table-card {
+    min-width: 0;
     overflow: hidden;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
@@ -393,7 +391,7 @@ onMounted(() => {
 
 .form-group input {
     width: 100%;
-    box-sizing: border-box;
+    min-width: 0;
     padding: 11px 12px;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
@@ -411,11 +409,15 @@ onMounted(() => {
 }
 
 .table-wrapper {
+    width: 100%;
+    max-width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 table {
     width: 100%;
+    min-width: 620px;
     border-collapse: collapse;
     text-align: left;
 }
@@ -434,18 +436,24 @@ th {
     color: #475569;
     font-size: 14px;
     font-weight: 600;
+    white-space: nowrap;
 }
 
 td {
     color: #334155;
+    overflow-wrap: anywhere;
+}
+
+td:nth-child(1) {
+    width: 70px;
+}
+
+td:nth-child(3) {
+    min-width: 200px;
 }
 
 tbody tr:last-child td {
     border-bottom: none;
-}
-
-tbody tr:hover {
-    background: #f8fafc;
 }
 
 .message {
@@ -482,7 +490,23 @@ tbody tr:hover {
     font-size: 14px;
 }
 
-@media (max-width: 650px) {
+/* 支援滑鼠的裝置才顯示 hover 效果 */
+@media (hover: hover) and (pointer: fine) {
+    .primary-button:not(:disabled):hover {
+        background: #1d4ed8;
+    }
+
+    .secondary-button:not(:disabled):hover {
+        background: #f8fafc;
+    }
+
+    .delete-button:hover {
+        background: #fee2e2;
+    }
+}
+
+/* 平板與較窄的桌面畫面 */
+@media (max-width: 900px) {
     .page-header {
         align-items: flex-start;
         flex-direction: column;
@@ -491,14 +515,55 @@ tbody tr:hover {
     .header-actions {
         width: 100%;
     }
+}
+
+/* 手機畫面 */
+@media (max-width: 650px) {
+    .customers-page {
+        gap: 18px;
+    }
+
+    .page-header h1 {
+        font-size: 25px;
+    }
+
+    .header-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .header-actions button {
+        width: 100%;
+        padding: 10px 8px;
+    }
 
     .form-card {
         padding: 18px;
     }
 
+    .form-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-actions button {
+        width: 100%;
+    }
+
     th,
     td {
         padding: 12px;
+    }
+
+    .row-actions {
+        gap: 6px;
+    }
+}
+
+/* 減少動態效果的使用者偏好 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        scroll-behavior: auto;
     }
 }
 </style>

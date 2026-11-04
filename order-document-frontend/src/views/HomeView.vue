@@ -98,11 +98,13 @@ const goTo = (path) => {
   </section>
 </template>
 
+
 <style scoped>
 .dashboard {
   display: flex;
   flex-direction: column;
   gap: 28px;
+  min-width: 0;
 }
 
 .welcome-panel {
@@ -110,16 +112,22 @@ const goTo = (path) => {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+  min-width: 0;
   padding: 32px;
   border: 1px solid #e0eaf7;
   border-radius: 14px;
   background: linear-gradient(120deg, #fff, #edf5ff);
 }
 
+.welcome-panel>div:first-child {
+  min-width: 0;
+}
+
 .welcome-panel h1 {
   margin: 0 0 12px;
   color: #172b4d;
   font-size: 30px;
+  line-height: 1.3;
 }
 
 .welcome-panel>div:first-child>p {
@@ -138,6 +146,7 @@ const goTo = (path) => {
 .user-icon {
   display: grid;
   place-items: center;
+  flex-shrink: 0;
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -166,6 +175,7 @@ const goTo = (path) => {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  min-width: 0;
   min-height: 280px;
   padding: 26px;
   border: 1px solid var(--card-border);
@@ -175,11 +185,6 @@ const goTo = (path) => {
   transition:
     transform 0.2s,
     box-shadow 0.2s;
-}
-
-.feature-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgb(15 23 42 / 8%);
 }
 
 .feature-card.blue {
@@ -209,6 +214,7 @@ const goTo = (path) => {
 .feature-icon {
   display: grid;
   place-items: center;
+  flex-shrink: 0;
   width: 64px;
   height: 64px;
   margin-bottom: 20px;
@@ -222,12 +228,14 @@ const goTo = (path) => {
   margin: 0 0 12px;
   color: #1e293b;
   font-size: 22px;
+  line-height: 1.4;
 }
 
 .feature-description {
   margin: 0 0 24px;
   color: #64748b;
   line-height: 1.9;
+  overflow-wrap: anywhere;
 }
 
 .feature-link {
@@ -248,12 +256,14 @@ const goTo = (path) => {
 }
 
 .feature-link span {
+  flex-shrink: 0;
   font-size: 23px;
   transition: transform 0.2s;
 }
 
-.feature-link:not(:disabled):hover span {
-  transform: translateX(4px);
+.feature-link:focus-visible {
+  outline: 2px solid var(--card-color);
+  outline-offset: 4px;
 }
 
 .feature-link:disabled {
@@ -265,6 +275,7 @@ const goTo = (path) => {
   display: flex;
   align-items: flex-start;
   gap: 18px;
+  min-width: 0;
   padding: 24px;
   border: 1px solid #dbeafe;
   border-radius: 12px;
@@ -284,6 +295,10 @@ const goTo = (path) => {
   font-weight: 700;
 }
 
+.notice-panel>div:last-child {
+  min-width: 0;
+}
+
 .notice-panel h2 {
   margin: 2px 0 8px;
   font-size: 18px;
@@ -293,18 +308,38 @@ const goTo = (path) => {
   margin: 0;
   color: #64748b;
   line-height: 1.8;
+  overflow-wrap: anywhere;
 }
 
+/* 觸控以外的裝置才使用滑鼠 hover 效果 */
+@media (hover: hover) and (pointer: fine) {
+  .feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgb(15 23 42 / 8%);
+  }
+
+  .feature-link:not(:disabled):hover span {
+    transform: translateX(4px);
+  }
+}
+
+/* 平板與較窄的桌面畫面 */
 @media (max-width: 1100px) {
   .feature-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
+/* 手機畫面 */
 @media (max-width: 650px) {
+  .dashboard {
+    gap: 20px;
+  }
+
   .welcome-panel {
     align-items: flex-start;
     flex-direction: column;
+    gap: 20px;
     padding: 24px;
   }
 
@@ -313,15 +348,38 @@ const goTo = (path) => {
   }
 
   .feature-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
   }
 
   .feature-card {
     min-height: 240px;
+    padding: 22px;
+  }
+
+  .feature-icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 16px;
+    font-size: 30px;
+  }
+
+  .feature-card h2 {
+    font-size: 20px;
   }
 
   .notice-panel {
+    gap: 12px;
     padding: 18px;
+  }
+}
+
+/* 減少動態效果的使用者偏好 */
+@media (prefers-reduced-motion: reduce) {
+
+  .feature-card,
+  .feature-link span {
+    transition: none;
   }
 }
 </style>
