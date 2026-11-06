@@ -45,18 +45,19 @@ const login = async () => {
 
         <form @submit.prevent="login">
             <div>
-                <label>帳號：</label>
-                <input v-model="username" type="text" />
+                <label for="username">帳號：</label>
+                <input id="username" v-model="username" type="text" />
             </div>
 
             <div>
-                <label>密碼：</label>
-                <input v-model="password" type="password" />
+                <label for="password">密碼：</label>
+                <input id="password" v-model="password" type="password" />
             </div>
 
             <button type="submit">登入</button>
         </form>
 
         <p>{{ loginMessage }}</p>
+
     </main>
 </template>
